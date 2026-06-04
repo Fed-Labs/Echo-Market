@@ -284,18 +284,11 @@ export function LandingPage() {
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         onMouseMove={handleMouseMove}
       >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ opacity: 0.6 }}
-        >
-          <source src="/hero-crystal.webm" type="video/webm" />
-          <source src="/hero-crystal.mp4" type="video/mp4" />
-        </video>
+        {/* Animated mesh gradient background */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <div className="absolute inset-0 mesh-gradient" />
+          <div className="absolute inset-0 mesh-overlay" />
+        </div>
         <FloatingParticles />
 
         {/* Animated spotlight following cursor */}
@@ -740,6 +733,55 @@ export function LandingPage() {
         }
         .animate-marquee {
           animation: marquee 30s linear infinite;
+        }
+        @keyframes mesh-move-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30%, -20%) scale(1.1); }
+          66% { transform: translate(-20%, 15%) scale(0.9); }
+        }
+        @keyframes mesh-move-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-25%, 25%) scale(1.2); }
+          66% { transform: translate(15%, -30%) scale(0.85); }
+        }
+        @keyframes mesh-move-3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(20%, 30%) scale(0.95); }
+          66% { transform: translate(-30%, -15%) scale(1.15); }
+        }
+        @keyframes mesh-pulse {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 0.8; }
+        }
+        .mesh-gradient {
+          background:
+            radial-gradient(ellipse 80% 60% at 20% 30%, rgba(255, 90, 54, 0.18), transparent 60%),
+            radial-gradient(ellipse 60% 80% at 80% 70%, rgba(200, 60, 30, 0.12), transparent 55%),
+            radial-gradient(ellipse 70% 50% at 50% 20%, rgba(255, 120, 80, 0.10), transparent 50%),
+            radial-gradient(ellipse 50% 70% at 30% 80%, rgba(180, 50, 20, 0.08), transparent 55%),
+            radial-gradient(ellipse 90% 40% at 70% 40%, rgba(220, 80, 40, 0.06), transparent 50%);
+          filter: blur(40px);
+        }
+        .mesh-gradient::before,
+        .mesh-gradient::after {
+          content: '';
+          position: absolute;
+          inset: -50%;
+          border-radius: 50%;
+        }
+        .mesh-gradient::before {
+          background: radial-gradient(ellipse 60% 50% at 40% 40%, rgba(255, 90, 54, 0.25), transparent 55%);
+          animation: mesh-move-1 20s ease-in-out infinite;
+        }
+        .mesh-gradient::after {
+          background: radial-gradient(ellipse 50% 60% at 60% 60%, rgba(200, 60, 30, 0.20), transparent 50%);
+          animation: mesh-move-2 25s ease-in-out infinite;
+        }
+        .mesh-overlay {
+          background:
+            radial-gradient(ellipse 40% 30% at 50% 50%, rgba(255, 90, 54, 0.08), transparent 60%);
+          animation: mesh-move-3 18s ease-in-out infinite, mesh-pulse 8s ease-in-out infinite;
+          mix-blend-mode: screen;
         }
       `}</style>
     </div>
