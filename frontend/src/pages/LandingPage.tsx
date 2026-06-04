@@ -289,9 +289,11 @@ export function LandingPage() {
           loop
           muted
           playsInline
+          preload="metadata"
           className="absolute inset-0 w-full h-full object-cover z-0"
           style={{ opacity: 0.6 }}
         >
+          <source src="/hero-crystal.webm" type="video/webm" />
           <source src="/hero-crystal.mp4" type="video/mp4" />
         </video>
         <FloatingParticles />
