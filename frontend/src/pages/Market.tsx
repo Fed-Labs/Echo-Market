@@ -137,6 +137,14 @@ export function Market() {
       .filter((p): p is NonNullable<typeof p> => p !== null && !p.claimed);
   }, [positionsResult, user]);
 
+  const { data: allowance } = useReadContract({
+    address: USDC_ADDRESS,
+    abi: USDC_ABI,
+    functionName: "allowance",
+    args: user ? [user, marketAddress] : undefined,
+    query: { enabled: !!user },
+  });
+
   const { writeContract: approveUsdc, data: approveHash } = useWriteContract();
   const { isSuccess: approveSuccess } = useWaitForTransactionReceipt({ hash: approveHash });
 
@@ -153,6 +161,8 @@ export function Market() {
       showToast("USDC approved", "success");
     }
   }, [approveSuccess, queryClient]);
+
+  const needsApproval = !!user && !!allowance && parseUnits(amount || "0", 6) > allowance;
 
   useEffect(() => {
     if (!openLoading && openHash) {
@@ -172,22 +182,27 @@ export function Market() {
   const handleOpen = () => {
     if (!amount || !marketAddress) return;
     const value = parseUnits(amount, 6);
-    if (!approveSuccess) {
+    if (needsApproval) {
       approveUsdc({
         address: USDC_ADDRESS,
         abi: USDC_ABI,
         functionName: "approve",
         args: [marketAddress, value],
+      }, {
+        onSuccess: () => showToast("Approve transaction sent", "info"),
+        onError: (err: any) => showToast(err?.shortMessage || err?.message || "Approval failed", "error"),
       });
-      showToast("Approve transaction sent", "info");
     } else {
       openPosition({
         address: marketAddress,
         abi: ECHO_MARKET_ABI,
         functionName: "openPosition",
         args: [posType, value],
+        gas: 500000n,
+      }, {
+        onSuccess: () => showToast("Position opened", "success"),
+        onError: (err: any) => showToast(err?.shortMessage || err?.message || "Open position failed", "error"),
       });
-      showToast("Position opened", "success");
     }
   };
 
@@ -197,6 +212,7 @@ export function Market() {
       abi: ECHO_MARKET_ABI,
       functionName: "closePosition",
       args: [BigInt(positionId)],
+      gas: 500000n,
     }, {
       onSuccess: () => showToast("Close position submitted", "success"),
       onError: (err: any) => showToast(err?.shortMessage || err?.message || "Close failed", "error"),
@@ -525,7 +541,7 @@ export function Market() {
           onMouseEnter={(e) => { if (!openLoading && user) e.currentTarget.style.filter = "brightness(1.15)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.filter = "brightness(1)"; }}
         >
-          {openLoading ? "CONFIRMING..." : approveSuccess ? "OPEN POSITION" : "APPROVE USDC"}
+          {openLoading ? "CONFIRMING..." : needsApproval ? "APPROVE USDC" : "OPEN POSITION"}
         </button>
         {!user && (
           <p className="text-[10px] font-medium mt-3 text-center" style={{ color: "var(--text-tertiary)" }}>
