@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Market {
+  id          String   @id @default(uuid())
+  address     String   @unique
+  protocol    String
+  windowDuration Int
+  minStake    String
+  maxStake    String
+  insuranceBps Int
+  totalShort  String   @default("0")
+  totalLong   String   @default("0")
+  status      String   @default("Open")
+  openingTime DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  positions   Position[]
+  exploits    Exploit[]
+  riskScores  RiskScore[]
+}
+
+model Position {
+  id          String   @id @default(uuid())
+  positionId  Int
+  marketId    String
+  user        String
+  posType     String
+  amount      String
+  entryPrice  String
+  openedAt    DateTime
+  claimed     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  market      Market   @relation(fields: [marketId], references: [id])
+
+  @@unique([marketId, positionId])
+}
+
+model Exploit {
+  id          String   @id @default(uuid())
+  submissionId Int
+  marketId    String
+  researcher  String
+  ipfsCID     String
+  status      String   @default("Pending")
+  submittedAt DateTime
+  resolvedAt  DateTime?
+  slashAmount String   @default("0")
+  createdAt   DateTime @default(now())
+
+  market      Market   @relation(fields: [marketId], references: [id])
+
+  @@unique([submissionId, marketId])
+}
+
+model RiskScore {
+  id          String   @id @default(uuid())
+  marketId    String
+  protocol    String
+  score       String
+  totalShort  String
+  totalLong   String
+  timestamp   DateTime
+
+  market      Market   @relation(fields: [marketId], references: [id])
+
+  @@index([protocol, timestamp])
+}
+
+model Researcher {
+  id          String   @id @default(uuid())
+  address     String   @unique
+  verifiedFinds Int    @default(0)
+  totalEarned Int      @default(0)
+  winRate     Int      @default(0)
+  openPositions Int    @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+model SubmissionContent {
+  hash        String   @id
+  content     String
+  createdAt   DateTime @default(now())
+}
