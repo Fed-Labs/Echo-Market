@@ -29,9 +29,9 @@ export function Constellation({ className = "" }: { className?: string }) {
 
     const mouse = { x: -9999, y: -9999, active: false };
     const particles: Particle[] = [];
-    const PARTICLE_COUNT = 180;
-    const CONNECTION_DIST = 140;
-    const MOUSE_RADIUS = 200;
+    const PARTICLE_COUNT = 60;
+    const CONNECTION_DIST = 120;
+    const MOUSE_RADIUS = 150;
 
     function resize() {
       const rect = container!.getBoundingClientRect();

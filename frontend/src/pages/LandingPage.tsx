@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { useAccount } from "wagmi";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRef, useState, useEffect } from "react";
@@ -192,40 +192,32 @@ function GradientText({ text, className = "" }: { text: string; className?: stri
   );
 }
 
-function FloatingParticles() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 3 + 1,
-    duration: Math.random() * 20 + 15,
-    delay: Math.random() * 5,
-  }));
+const FLOATING_PARTICLES = Array.from({ length: 20 }, (_, i) => ({
+  id: i,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: Math.random() * 3 + 1,
+  duration: Math.random() * 20 + 15,
+  delay: Math.random() * 5,
+  color: i % 3 === 0 ? "var(--accent)" : i % 3 === 1 ? "var(--positive)" : "var(--text-tertiary)",
+}));
 
+function FloatingParticles() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-      {particles.map((p) => (
-        <motion.div
+      {FLOATING_PARTICLES.map((p) => (
+        <div
           key={p.id}
-          className="absolute rounded-full"
+          className="absolute rounded-full float-particle"
           style={{
             left: `${p.x}%`,
             top: `${p.y}%`,
             width: p.size,
             height: p.size,
-            background: p.id % 3 === 0 ? "var(--accent)" : p.id % 3 === 1 ? "var(--positive)" : "var(--text-tertiary)",
+            background: p.color,
             opacity: 0.3,
-          }}
-          animate={{
-            y: [0, -40, 0],
-            x: [0, 20, -10, 0],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
+            animationDuration: `${p.duration}s`,
+            animationDelay: `${p.delay}s`,
           }}
         />
       ))}
@@ -263,15 +255,11 @@ export function LandingPage() {
   const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0]);
   const heroScale = useTransform(heroScroll, [0, 1], [1, 0.9]);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const spotlightX = useMotionTemplate`${mouseX}px`;
-  const spotlightY = useMotionTemplate`${mouseY}px`;
-
   const handleMouseMove = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
+    const el = e.currentTarget as HTMLElement;
+    el.style.setProperty("--spotlight-x", `${e.clientX - rect.left}px`);
+    el.style.setProperty("--spotlight-y", `${e.clientY - rect.top}px`);
   };
 
   return (
@@ -283,20 +271,25 @@ export function LandingPage() {
         ref={heroRef}
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         onMouseMove={handleMouseMove}
+        style={{ "--spotlight-x": "50%", "--spotlight-y": "50%" } as React.CSSProperties}
       >
-        {/* Animated mesh gradient background */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute inset-0 mesh-gradient" />
-          <div className="absolute inset-0 mesh-overlay" />
-        </div>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          style={{ opacity: 0.6 }}
+        >
+          <source src="/hero-crystal.webm" type="video/webm" />
+          <source src="/hero-crystal.mp4" type="video/mp4" />
+        </video>
         <FloatingParticles />
 
         {/* Animated spotlight following cursor */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{
-            background: useMotionTemplate`radial-gradient(600px circle at ${spotlightX} ${spotlightY}, rgba(255,90,54,0.08), transparent 40%)`,
-          }}
+        <div
+          className="absolute inset-0 pointer-events-none z-[1] spotlight-cursor"
         />
         <div
           className="absolute inset-0 pointer-events-none z-[1]"
@@ -305,11 +298,9 @@ export function LandingPage() {
 
         {/* Dynamic blurred orbs */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-20 pointer-events-none">
-          <motion.div
-            className="absolute inset-0 rounded-full mix-blend-screen filter blur-[120px]"
+          <div
+            className="absolute inset-0 rounded-full mix-blend-screen filter blur-[120px] orb-pulse"
             style={{ background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)" }}
-            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
 
@@ -734,54 +725,26 @@ export function LandingPage() {
         .animate-marquee {
           animation: marquee 30s linear infinite;
         }
-        @keyframes mesh-move-1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30%, -20%) scale(1.1); }
-          66% { transform: translate(-20%, 15%) scale(0.9); }
+        @keyframes float-particle-anim {
+          0%, 100% { transform: translate(0, 0); opacity: 0.2; }
+          25% { transform: translate(20px, -40px); opacity: 0.5; }
+          50% { transform: translate(-10px, -20px); opacity: 0.3; }
+          75% { transform: translate(15px, -50px); opacity: 0.4; }
         }
-        @keyframes mesh-move-2 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(-25%, 25%) scale(1.2); }
-          66% { transform: translate(15%, -30%) scale(0.85); }
+        .float-particle {
+          animation-name: float-particle-anim;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
         }
-        @keyframes mesh-move-3 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(20%, 30%) scale(0.95); }
-          66% { transform: translate(-30%, -15%) scale(1.15); }
+        .spotlight-cursor {
+          background: radial-gradient(600px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,90,54,0.08), transparent 40%);
         }
-        @keyframes mesh-pulse {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 0.8; }
+        @keyframes orb-pulse-anim {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          50% { transform: scale(1.2); opacity: 0.6; }
         }
-        .mesh-gradient {
-          background:
-            radial-gradient(ellipse 80% 60% at 20% 30%, rgba(255, 90, 54, 0.18), transparent 60%),
-            radial-gradient(ellipse 60% 80% at 80% 70%, rgba(200, 60, 30, 0.12), transparent 55%),
-            radial-gradient(ellipse 70% 50% at 50% 20%, rgba(255, 120, 80, 0.10), transparent 50%),
-            radial-gradient(ellipse 50% 70% at 30% 80%, rgba(180, 50, 20, 0.08), transparent 55%),
-            radial-gradient(ellipse 90% 40% at 70% 40%, rgba(220, 80, 40, 0.06), transparent 50%);
-          filter: blur(40px);
-        }
-        .mesh-gradient::before,
-        .mesh-gradient::after {
-          content: '';
-          position: absolute;
-          inset: -50%;
-          border-radius: 50%;
-        }
-        .mesh-gradient::before {
-          background: radial-gradient(ellipse 60% 50% at 40% 40%, rgba(255, 90, 54, 0.25), transparent 55%);
-          animation: mesh-move-1 20s ease-in-out infinite;
-        }
-        .mesh-gradient::after {
-          background: radial-gradient(ellipse 50% 60% at 60% 60%, rgba(200, 60, 30, 0.20), transparent 50%);
-          animation: mesh-move-2 25s ease-in-out infinite;
-        }
-        .mesh-overlay {
-          background:
-            radial-gradient(ellipse 40% 30% at 50% 50%, rgba(255, 90, 54, 0.08), transparent 60%);
-          animation: mesh-move-3 18s ease-in-out infinite, mesh-pulse 8s ease-in-out infinite;
-          mix-blend-mode: screen;
+        .orb-pulse {
+          animation: orb-pulse-anim 8s ease-in-out infinite;
         }
       `}</style>
     </div>
