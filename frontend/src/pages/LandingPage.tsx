@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
 import { useAccount } from "wagmi";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRef, useState, useEffect } from "react";
@@ -48,10 +48,10 @@ const PROTOCOLS = [
 ];
 
 const STEPS = [
-  { title: "List", desc: "Any protocol lists its smart contracts. No approval. No whitelisting fee." },
-  { title: "Stake", desc: "Researchers stake USDC to price exploit probability. Short bets on hack. Long bets on safety." },
-  { title: "Resolve", desc: "48h guardian arbitration validates PoCs. Confirmed exploits trigger automatic payouts." },
-  { title: "Consume", desc: "Money markets, insurers, and derivatives platforms query the live risk feed on-chain." },
+  { title: "List", desc: "Any protocol lists its smart contracts. No approval. No whitelisting fee.", image: "/step-list.png" },
+  { title: "Stake", desc: "Researchers stake USDC to price exploit probability. Short bets on hack. Long bets on safety.", image: "/step-stake.png" },
+  { title: "Resolve", desc: "48h guardian arbitration validates PoCs. Confirmed exploits trigger automatic payouts.", image: "/step-resolve.png" },
+  { title: "Consume", desc: "Money markets, insurers, and derivatives platforms query the live risk feed on-chain.", image: "/step-consume.png" },
 ];
 
 function ScrollProgress() {
@@ -59,10 +59,23 @@ function ScrollProgress() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 h-px z-[60] origin-left"
-      style={{ scaleX, background: "var(--accent)", boxShadow: "0 0 12px var(--accent)" }}
+      className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
+      style={{ scaleX, background: "linear-gradient(90deg, var(--accent), #FF8C69, var(--accent))", boxShadow: "0 0 20px var(--accent), 0 0 60px rgba(255,90,54,0.3)" }}
     />
   );
+}
+
+function SectionDivider() {
+  return (
+    <div className="relative h-px w-full overflow-hidden">
+      <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, transparent, var(--border), var(--accent), var(--border), transparent)" }} />
+      <div className="absolute inset-0 section-shimmer" style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,90,54,0.6) 50%, transparent 100%)", width: "30%" }} />
+    </div>
+  );
+}
+
+function GrainOverlay() {
+  return <div className="noise-overlay" />;
 }
 
 function FadeUp({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -265,6 +278,7 @@ export function LandingPage() {
   return (
     <div className="relative">
       <ScrollProgress />
+      <GrainOverlay />
 
       {/* Hero */}
       <section
@@ -316,22 +330,12 @@ export function LandingPage() {
           className="glass-panel p-16 rounded-3xl relative z-10 text-center px-6 max-w-5xl mx-auto shadow-2xl"
         >
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold tracking-widest mb-10"
-            style={{ border: "1px solid var(--border)", color: "var(--text-secondary)" }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse-glow" style={{ background: "var(--accent)" }} />
-            LIVE ON BASE SEPOLIA
-          </motion.div>
-
-          <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8"
+            transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-8 relative"
           >
+            <div className="absolute inset-0 bg-[#FF5A36] opacity-[0.15] blur-[120px] rounded-full pointer-events-none scale-[2]" />
             <MagneticText
               text="ECHO"
               className="text-7xl md:text-9xl font-black tracking-tighter leading-[0.85]"
@@ -422,13 +426,22 @@ export function LandingPage() {
 
       {/* How It Works */}
       <section className="relative py-32 px-6" style={{ background: "var(--bg)" }}>
-        <div className="max-w-6xl mx-auto">
+        {/* Ambient background glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,90,54,0.03), transparent 60%)" }} />
+        <div className="max-w-6xl mx-auto relative">
           <FadeUp>
             <div className="mb-20 text-center">
-              <span className="text-xs font-bold tracking-widest block mb-4" style={{ color: "var(--accent)" }}>MECHANISM</span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter" style={{ color: "var(--text-primary)" }}>
+              <div className="inline-flex items-center gap-3 mb-4">
+                <span className="w-8 h-px" style={{ background: "var(--accent)" }} />
+                <span className="text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>MECHANISM</span>
+                <span className="w-8 h-px" style={{ background: "var(--accent)" }} />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter block" style={{ color: "var(--text-primary)" }}>
                 How It Works
               </h2>
+              <p className="text-sm mt-4 max-w-md mx-auto" style={{ color: "var(--text-tertiary)" }}>
+                Four steps from listing to consumption. Fully autonomous. Fully on-chain.
+              </p>
             </div>
           </FadeUp>
 
@@ -442,42 +455,57 @@ export function LandingPage() {
             {STEPS.map((step, i) => (
               <motion.div
                 key={step.title}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className="glass-panel p-8 text-center relative group rounded-xl"
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                className="relative group"
+                style={{ willChange: "opacity, transform" }}
               >
-                <div className="absolute inset-0 bg-[#FF5A36] opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500" />
-                <div
-                  className="w-16 h-16 mx-auto mb-6 flex items-center justify-center relative z-10 rounded-full"
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    boxShadow: "0 0 20px rgba(255,90,54,0.15)",
-                  }}
-                >
-                  <span className="text-xl font-black font-data" style={{ color: "var(--accent)" }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                <div className="glass-panel p-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(255,90,54,0.1)]">
+                  <div className="absolute inset-0 bg-[#FF5A36] opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500 rounded-xl" />
+                  <div className="mb-6 relative w-full flex justify-center">
+                    <img src={step.image} alt={step.title} className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-2xl" />
+                  </div>
+                  <div
+                    className="w-16 h-16 mx-auto mb-6 flex items-center justify-center relative z-10 rounded-full transition-shadow duration-500 group-hover:shadow-[0_0_30px_rgba(255,90,54,0.3)]"
+                    style={{
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      boxShadow: "0 0 20px rgba(255,90,54,0.15)",
+                    }}
+                  >
+                    <span className="text-xl font-black font-data" style={{ color: "var(--accent)" }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold mb-3 relative z-10" style={{ color: "var(--text-primary)" }}>{step.title}</h3>
+                  <p className="text-sm leading-relaxed relative z-10" style={{ color: "var(--text-secondary)" }}>{step.desc}</p>
                 </div>
-                <h3 className="text-lg font-bold mb-3 relative z-10" style={{ color: "var(--text-primary)" }}>{step.title}</h3>
-                <p className="text-sm leading-relaxed relative z-10" style={{ color: "var(--text-secondary)" }}>{step.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* Live Risk Feed Preview */}
       <section className="relative py-32 px-6" style={{ background: "var(--bg)" }}>
-        <div className="max-w-6xl mx-auto">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 40% at 20% 50%, rgba(255,90,54,0.03), transparent 60%)" }} />
+        <div className="max-w-6xl mx-auto relative">
           <FadeUp>
             <div className="mb-16">
-              <span className="text-xs font-bold tracking-widest block mb-4" style={{ color: "var(--accent)" }}>LIVE FEED</span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter" style={{ color: "var(--text-primary)" }}>
+              <div className="inline-flex items-center gap-3 mb-4">
+                <span className="w-2 h-2 rounded-full animate-pulse-glow" style={{ background: "var(--accent)" }} />
+                <span className="text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>LIVE FEED</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter block" style={{ color: "var(--text-primary)" }}>
                 Real-Time Risk<br />Signals
               </h2>
+              <p className="text-sm mt-4 max-w-lg" style={{ color: "var(--text-tertiary)" }}>
+                Live exploit probability feeds powering the next generation of DeFi risk infrastructure.
+              </p>
             </div>
           </FadeUp>
 
@@ -487,10 +515,12 @@ export function LandingPage() {
                 key={p.name}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="glass-panel flex items-center justify-between px-6 py-5 group cursor-pointer relative overflow-hidden rounded-xl border border-[var(--glass-border)] hover:border-[#FF5A36] transition-colors duration-300"
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.6, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                className="relative group"
+                style={{ willChange: "opacity, transform" }}
               >
+                <div className="glass-panel flex items-center justify-between px-6 py-5 cursor-pointer relative overflow-hidden rounded-xl border border-[var(--glass-border)] hover:border-[#FF5A36] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(255,90,54,0.15)]">
                 <div className="flex items-center gap-4">
                   <span className="text-xs font-data font-bold w-6" style={{ color: "var(--text-tertiary)" }}>
                     {String(i + 1).padStart(2, "0")}
@@ -535,31 +565,44 @@ export function LandingPage() {
                     {p.risk}
                   </span>
                 </div>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* Features */}
       <section className="relative py-32 px-6" style={{ background: "var(--bg)" }}>
-        <div className="max-w-6xl mx-auto">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 50% 50% at 80% 30%, rgba(255,90,54,0.03), transparent 60%)" }} />
+        <div className="max-w-6xl mx-auto relative">
           <FadeUp>
             <div className="mb-16">
-              <span className="text-xs font-bold tracking-widest block mb-4" style={{ color: "var(--accent)" }}>CAPABILITIES</span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter" style={{ color: "var(--text-primary)" }}>
+              <div className="inline-flex items-center gap-3 mb-4">
+                <span className="w-8 h-px" style={{ background: "var(--accent)" }} />
+                <span className="text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>CAPABILITIES</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter relative z-30 block" style={{ color: "var(--text-primary)" }}>
                 What Echo Does
               </h2>
+              <p className="text-sm mt-4 max-w-lg" style={{ color: "var(--text-tertiary)" }}>
+                A complete risk infrastructure layer for decentralized finance.
+              </p>
             </div>
           </FadeUp>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: "var(--border)" }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px relative z-10" style={{ background: "var(--border)" }}>
             {FEATURES.map((f, i) => (
               <FeatureCard key={f.num} feature={f} index={i} />
             ))}
           </div>
+          
         </div>
       </section>
+
+      <SectionDivider />
 
       {/* Stats */}
       <section className="relative py-24 px-6 overflow-hidden" style={{ background: "var(--bg)" }}>
@@ -570,7 +613,10 @@ export function LandingPage() {
         <div className="max-w-6xl mx-auto relative">
           <FadeUp>
             <div className="mb-14">
-              <span className="text-xs font-bold tracking-widest block mb-3" style={{ color: "var(--text-tertiary)" }}>TRACTION</span>
+              <div className="inline-flex items-center gap-3 mb-3">
+                <span className="w-8 h-px" style={{ background: "var(--text-tertiary)" }} />
+                <span className="text-xs font-bold tracking-widest" style={{ color: "var(--text-tertiary)" }}>TRACTION</span>
+              </div>
             </div>
           </FadeUp>
 
@@ -745,6 +791,17 @@ export function LandingPage() {
         }
         .orb-pulse {
           animation: orb-pulse-anim 8s ease-in-out infinite;
+        }
+        @keyframes section-shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(400%); }
+        }
+        .section-shimmer {
+          animation: section-shimmer 3s ease-in-out infinite;
+        }
+        @keyframes risk-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
         }
       `}</style>
     </div>
