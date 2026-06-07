@@ -79,6 +79,8 @@ export function ParticleSphere({ scrollProgressRef }: ParticleSphereProps) {
   const rafRef = useRef<number>(0);
   const frozenRotYRef = useRef<number>(0);
   const frozenRotXRef = useRef<number>(0);
+  const introProgressRef = useRef<number>(0);
+  const introDoneRef = useRef<boolean>(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -142,6 +144,21 @@ export function ParticleSphere({ scrollProgressRef }: ParticleSphereProps) {
 
     function draw() {
       const progress = scrollProgressRef.current;
+
+      // Intro implosion: on first load, particles implode from exploded to formed
+      let effectiveProgress = progress;
+      if (!introDoneRef.current && progress < 0.02) {
+        introProgressRef.current += 0.012;
+        if (introProgressRef.current >= 1) {
+          introProgressRef.current = 1;
+          introDoneRef.current = true;
+        }
+        const ease = 1 - Math.pow(1 - introProgressRef.current, 3);
+        effectiveProgress = 0.15 * (1 - ease);
+      } else {
+        introDoneRef.current = true;
+      }
+
       const fadeOut = progress > 0.88 ? Math.max(0, 1 - (progress - 0.88) / 0.04) : 1;
       canvas!.style.opacity = String(fadeOut);
       if (fadeOut <= 0) {
@@ -176,12 +193,12 @@ export function ParticleSphere({ scrollProgressRef }: ParticleSphereProps) {
       const sinRX = Math.sin(rotX);
 
       let explodePhase: number;
-      if (progress < 0.15) {
-        explodePhase = progress / 0.15;
-      } else if (progress < 0.78) {
+      if (effectiveProgress < 0.15) {
+        explodePhase = effectiveProgress / 0.15;
+      } else if (effectiveProgress < 0.78) {
         explodePhase = 1;
-      } else if (progress < 0.88) {
-        explodePhase = 1 - (progress - 0.78) / 0.1;
+      } else if (effectiveProgress < 0.88) {
+        explodePhase = 1 - (effectiveProgress - 0.78) / 0.1;
       } else {
         explodePhase = 0;
       }

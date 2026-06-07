@@ -94,17 +94,23 @@ export function LandingPage() {
         {/* Hero tagline above logo */}
         <motion.div
           className="fixed top-[8%] left-0 right-0 z-[4] pointer-events-none px-6 text-center"
-          style={{
-            opacity: useTransform(scrollYProgress, [0, 0.06, 0.12], [1, 0.5, 0]),
-            y: useTransform(scrollYProgress, [0, 0.12], [0, -30]),
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h2 className="text-xl md:text-3xl font-medium tracking-tight text-white mb-2">
-            The Oracle for Exploit Probability
-          </h2>
-          <p className="text-sm md:text-lg font-medium" style={{ color: "var(--accent)" }}>
-            Price what everyone fears.
-          </p>
+          <motion.div
+            style={{
+              opacity: useTransform(scrollYProgress, [0, 0.06, 0.12], [1, 0.5, 0]),
+              y: useTransform(scrollYProgress, [0, 0.12], [0, -30]),
+            }}
+          >
+            <h2 className="text-xl md:text-3xl font-medium tracking-tight text-white mb-2">
+              The Oracle for Exploit Probability
+            </h2>
+            <p className="text-sm md:text-lg font-medium" style={{ color: "var(--accent)" }}>
+              Price what everyone fears.
+            </p>
+          </motion.div>
         </motion.div>
 
         {/* Logo with pixel dissolve */}
@@ -113,11 +119,16 @@ export function LandingPage() {
         {/* Enter App button — only at 0% hero */}
         <motion.div
           className="fixed bottom-[10%] left-0 right-0 z-[6] flex items-center justify-center px-6 pointer-events-none"
-          style={{
-            opacity: useTransform(scrollYProgress, [0, 0.03, 0.08], [1, 0.5, 0]),
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.25, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
-          {!isConnected ? (
+          <motion.div
+            style={{
+              opacity: useTransform(scrollYProgress, [0, 0.03, 0.08], [1, 0.5, 0]),
+            }}
+          >
+            {!isConnected ? (
             <button
               onClick={() => {
                 if (ready) login();
@@ -158,22 +169,30 @@ export function LandingPage() {
               ENTER APP
             </button>
           )}
+          </motion.div>
         </motion.div>
 
         {/* Scroll hint */}
         <motion.div
-          className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9] flex flex-col items-center gap-2"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.06], [1, 0]) }}
+          className="fixed bottom-10 left-0 right-0 z-[9] flex flex-col items-center gap-2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="text-[10px] font-bold tracking-widest" style={{ color: "var(--text-tertiary)" }}>
-            SCROLL
-          </span>
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-px h-8"
-            style={{ background: "linear-gradient(to bottom, #FF5A36, transparent)" }}
-          />
+            className="flex flex-col items-center gap-2"
+            style={{ opacity: useTransform(scrollYProgress, [0, 0.06], [1, 0]) }}
+          >
+            <span className="text-[10px] font-bold tracking-widest" style={{ color: "var(--text-tertiary)" }}>
+              SCROLL
+            </span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-px h-8"
+              style={{ background: "linear-gradient(to bottom, #FF5A36, transparent)" }}
+            />
+          </motion.div>
         </motion.div>
 
         {/* Orbiting brand icons (12-32% scroll) */}
