@@ -1,35 +1,49 @@
+import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, type MotionValue } from "framer-motion";
 import { useAccount } from "wagmi";
 import { usePrivy } from "@privy-io/react-auth";
-import { useRef, useState, useEffect } from "react";
-import { Constellation } from "../components/Constellation";
-import { MagneticText } from "../components/MagneticText";
-import { ScrambleText } from "../components/ScrambleText";
-import { WarpJump } from "../components/WarpJump";
+import { ParticleSphere } from "../components/ParticleSphere";
+import { OrbitingIcons } from "../components/OrbitingIcons";
+import { LiveMarkets } from "../components/LiveMarkets";
+import { GlassCard } from "../components/GlassCard";
+import { LenisWrapper } from "../components/LenisWrapper";
+import { LogoDissolve } from "../components/LogoDissolve";
 
-const FEATURES = [
-  {
-    num: "01",
-    title: "Live Risk Oracle",
-    desc: "Chainlink-compatible feeds pricing exploit probability in real time. Every lending protocol needs this data.",
-  },
-  {
-    num: "02",
-    title: "Permissionless Markets",
-    desc: "Launch a prediction market for any smart contract. No permissions. No gatekeepers. Pure mechanism.",
-  },
-  {
-    num: "03",
-    title: "On-Chain Insurance",
-    desc: "Long-staker capital auto-converts to pro-rata insurance payouts for registered depositors on exploit.",
-  },
-  {
-    num: "04",
-    title: "Guardian Arbitration",
-    desc: "3/5 multisig council validates every PoC submission. 48h dispute window. False claims slashed 50%.",
-  },
-];
+function ScrollProgressBar() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
+      style={{
+        scaleX,
+        background: "linear-gradient(90deg, #FF5A36, #FF8C69, #FF5A36)",
+        boxShadow: "0 0 20px #FF5A36, 0 0 60px rgba(255,90,54,0.3)",
+      }}
+    />
+  );
+}
+
+function GrainOverlay() {
+  return <div className="noise-overlay" />;
+}
+
+function DeepGridBackground({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
+  const opacity = useTransform(scrollProgress, [0, 0.20, 0.35, 0.88, 0.92], [0, 0, 0.35, 0.35, 0]);
+  return (
+    <motion.div
+      className="fixed inset-0 pointer-events-none z-[2]"
+      style={{
+        opacity,
+        backgroundImage:
+          "linear-gradient(rgba(255, 107, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 107, 0, 0.03) 1px, transparent 1px)",
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent)",
+      }}
+    />
+  );
+}
 
 const STATS = [
   { label: "Active Markets", value: "24" },
@@ -38,376 +52,118 @@ const STATS = [
   { label: "Researchers", value: "143" },
 ];
 
-const PROTOCOLS = [
-  { name: "Aave V3", risk: 13, short: 420000, long: 2800000 },
-  { name: "Uniswap V4", risk: 45, short: 1800000, long: 2200000 },
-  { name: "EigenLayer", risk: 72, short: 3400000, long: 1300000 },
-  { name: "Lido", risk: 8, short: 120000, long: 1400000 },
-  { name: "Curve", risk: 34, short: 890000, long: 1700000 },
-  { name: "Compound", risk: 21, short: 310000, long: 1200000 },
-];
-
-const STEPS = [
-  { title: "List", desc: "Any protocol lists its smart contracts. No approval. No whitelisting fee.", image: "/step-list.png" },
-  { title: "Stake", desc: "Researchers stake USDC to price exploit probability. Short bets on hack. Long bets on safety.", image: "/step-stake.png" },
-  { title: "Resolve", desc: "48h guardian arbitration validates PoCs. Confirmed exploits trigger automatic payouts.", image: "/step-resolve.png" },
-  { title: "Consume", desc: "Money markets, insurers, and derivatives platforms query the live risk feed on-chain.", image: "/step-consume.png" },
-];
-
-function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
-      style={{ scaleX, background: "linear-gradient(90deg, var(--accent), #FF8C69, var(--accent))", boxShadow: "0 0 20px var(--accent), 0 0 60px rgba(255,90,54,0.3)" }}
-    />
-  );
-}
-
-function SectionDivider() {
-  return (
-    <div className="relative h-px w-full overflow-hidden">
-      <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, transparent, var(--border), var(--accent), var(--border), transparent)" }} />
-      <div className="absolute inset-0 section-shimmer" style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,90,54,0.6) 50%, transparent 100%)", width: "30%" }} />
-    </div>
-  );
-}
-
-function GrainOverlay() {
-  return <div className="noise-overlay" />;
-}
-
-function FadeUp({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: string; prefix?: string; suffix?: string }) {
-  const [display, setDisplay] = useState("0");
-  const ref = useRef<HTMLDivElement>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
-          const targetNum = parseFloat(value.replace(/[^0-9.]/g, ""));
-          const isDecimal = value.includes(".");
-          const duration = 2000;
-          const startTime = performance.now();
-          const animate = (time: number) => {
-            const elapsed = time - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 4);
-            const current = targetNum * eased;
-            setDisplay(isDecimal ? current.toFixed(1) : Math.floor(current).toString());
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [value, hasAnimated]);
-
-  return (
-    <div ref={ref} className="font-data font-bold">
-      {prefix}{display}{suffix}
-    </div>
-  );
-}
-
-function FeatureCard({ feature, index }: { feature: typeof FEATURES[0]; index: number }) {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: y * -8, y: x * 8 });
-    setSpotlight({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
-    setSpotlight({ x: 50, y: 50 });
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="group relative"
-      style={{ perspective: "1000px" }}
-    >
-      <div
-        className="glass-panel p-8 h-full transition-all duration-300 relative overflow-hidden rounded-2xl"
-        style={{
-          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: "transform 0.15s ease-out, box-shadow 0.3s ease-out",
-          boxShadow: tilt.x !== 0 ? "0 20px 40px rgba(0,0,0,0.4)" : "none",
-        }}
-      >
-        <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{
-            background: `radial-gradient(600px circle at ${spotlight.x}% ${spotlight.y}%, rgba(255,90,54,0.06), transparent 40%)`,
-          }}
-        />
-        <span className="text-4xl font-black font-data block mb-4 relative z-10" style={{ color: "var(--text-tertiary)", lineHeight: 1 }}>
-          {feature.num}
-        </span>
-        <h3 className="text-lg font-bold tracking-tight mb-3 relative z-10" style={{ color: "var(--text-primary)" }}>
-          {feature.title}
-        </h3>
-        <p className="text-sm leading-relaxed relative z-10" style={{ color: "var(--text-secondary)" }}>
-          {feature.desc}
-        </p>
-      </div>
-    </motion.div>
-  );
-}
-
-function GradientText({ text, className = "" }: { text: string; className?: string }) {
-  return (
-    <span
-      className={`bg-clip-text text-transparent bg-gradient-to-r from-[#FF5A36] via-[#FF8C69] to-[#FF5A36] animate-gradient-x ${className}`}
-      style={{
-        backgroundSize: "200% 100%",
-        animation: "gradient-x 3s ease infinite",
-      }}
-    >
-      {text}
-    </span>
-  );
-}
-
-const FLOATING_PARTICLES = Array.from({ length: 20 }, (_, i) => ({
-  id: i,
-  x: Math.random() * 100,
-  y: Math.random() * 100,
-  size: Math.random() * 3 + 1,
-  duration: Math.random() * 20 + 15,
-  delay: Math.random() * 5,
-  color: i % 3 === 0 ? "var(--accent)" : i % 3 === 1 ? "var(--positive)" : "var(--text-tertiary)",
-}));
-
-function FloatingParticles() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-      {FLOATING_PARTICLES.map((p) => (
-        <div
-          key={p.id}
-          className="absolute rounded-full float-particle"
-          style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            width: p.size,
-            height: p.size,
-            background: p.color,
-            opacity: 0.3,
-            animationDuration: `${p.duration}s`,
-            animationDelay: `${p.delay}s`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function Marquee() {
-  const items = ["Aave", "Uniswap", "Curve", "Lido", "Compound", "EigenLayer", "Morpho", "Pendle", "Balancer", "Synthetix"];
-  return (
-    <div className="overflow-hidden py-6" style={{ background: "var(--surface)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-      <div className="flex animate-marquee whitespace-nowrap">
-        {[...items, ...items, ...items].map((name, i) => (
-          <span key={i} className="mx-8 text-xs font-bold tracking-widest uppercase" style={{ color: "var(--text-tertiary)" }}>
-            {name}
-            <span className="ml-8" style={{ color: "var(--accent)", opacity: 0.5 }}>◆</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function LandingPage() {
   const { isConnected } = useAccount();
   const { login, ready } = usePrivy();
   const navigate = useNavigate();
-  const heroRef = useRef<HTMLElement>(null);
-  const [warpActive, setWarpActive] = useState(false);
-  const { scrollYProgress: heroScroll } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroY = useTransform(heroScroll, [0, 1], [0, 300]);
-  const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0]);
-  const heroScale = useTransform(heroScroll, [0, 1], [1, 0.9]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollProgressRef = useRef(0);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const el = e.currentTarget as HTMLElement;
-    el.style.setProperty("--spotlight-x", `${e.clientX - rect.left}px`);
-    el.style.setProperty("--spotlight-y", `${e.clientY - rect.top}px`);
-  };
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    scrollProgressRef.current = v;
+  });
+
+  // Mechanism section transforms — cards appear one by one with full entry + exit
+  const mechanismHeaderOpacity = useTransform(scrollYProgress, [0.28, 0.32, 0.62, 0.66], [0, 1, 1, 0]);
+  const mechanismHeaderY = useTransform(scrollYProgress, [0.28, 0.32, 0.62, 0.66], [30, 0, 0, -20]);
+
+  const card1Opacity = useTransform(scrollYProgress, [0.30, 0.36, 0.60, 0.64], [0, 1, 1, 0]);
+  const card1Y = useTransform(scrollYProgress, [0.30, 0.36, 0.60, 0.64], [50, 0, 0, -30]);
+  const card2Opacity = useTransform(scrollYProgress, [0.34, 0.40, 0.62, 0.66], [0, 1, 1, 0]);
+  const card2Y = useTransform(scrollYProgress, [0.34, 0.40, 0.62, 0.66], [50, 0, 0, -30]);
+  const card3Opacity = useTransform(scrollYProgress, [0.38, 0.44, 0.64, 0.68], [0, 1, 1, 0]);
+  const card3Y = useTransform(scrollYProgress, [0.38, 0.44, 0.64, 0.68], [50, 0, 0, -30]);
+  const card4Opacity = useTransform(scrollYProgress, [0.42, 0.48, 0.66, 0.70], [0, 1, 1, 0]);
+  const card4Y = useTransform(scrollYProgress, [0.42, 0.48, 0.66, 0.70], [50, 0, 0, -30]);
 
   return (
-    <div className="relative">
-      <ScrollProgress />
-      <GrainOverlay />
+    <LenisWrapper>
+      <div ref={containerRef} className="relative" style={{ height: "1000vh" }}>
+        <ScrollProgressBar />
+        <GrainOverlay />
 
-      {/* Hero */}
-      <section
-        ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        onMouseMove={handleMouseMove}
-        style={{ "--spotlight-x": "50%", "--spotlight-y": "50%" } as React.CSSProperties}
-      >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ opacity: 0.6 }}
-        >
-          <source src="/hero-crystal.webm" type="video/webm" />
-          <source src="/hero-crystal.mp4" type="video/mp4" />
-        </video>
-        <FloatingParticles />
+        {/* Fixed Canvas Background */}
+        <ParticleSphere scrollProgressRef={scrollProgressRef} />
+        <DeepGridBackground scrollProgress={scrollYProgress} />
 
-        {/* Animated spotlight following cursor */}
-        <div
-          className="absolute inset-0 pointer-events-none z-[1] spotlight-cursor"
-        />
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 0%, var(--bg) 100%)" }}
-        />
-
-        {/* Dynamic blurred orbs */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-20 pointer-events-none">
-          <div
-            className="absolute inset-0 rounded-full mix-blend-screen filter blur-[120px] orb-pulse"
-            style={{ background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)" }}
-          />
-        </div>
-
+        {/* Hero tagline above logo */}
         <motion.div
-          style={{ 
-            y: heroY, 
-            opacity: heroOpacity, 
-            scale: heroScale,
-            background: "rgba(10, 10, 15, 0.6)",
-            border: "1px solid rgba(255, 255, 255, 0.05)",
-            backdropFilter: "blur(20px)",
+          className="fixed top-[8%] left-0 right-0 z-[4] pointer-events-none px-6 text-center"
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.06, 0.12], [1, 0.5, 0]),
+            y: useTransform(scrollYProgress, [0, 0.12], [0, -30]),
           }}
-          className="glass-panel p-16 rounded-3xl relative z-10 text-center px-6 max-w-5xl mx-auto shadow-2xl"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8 relative"
-          >
-            <div className="absolute inset-0 bg-[#FF5A36] opacity-[0.15] blur-[120px] rounded-full pointer-events-none scale-[2]" />
-            <MagneticText
-              text="ECHO"
-              className="text-7xl md:text-9xl font-black tracking-tighter leading-[0.85]"
-              charClassName="font-black tracking-tighter"
-              charStyle={{ color: "var(--text-primary)", lineHeight: 0.85 }}
-            />
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-2xl md:text-3xl font-bold tracking-tight mb-6"
-          >
-            <GradientText text="The Oracle for Exploit Probability" />
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg md:text-xl leading-relaxed mb-12 max-w-xl mx-auto"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            $2.4B was lost to exploits in 2024. Zero real-time risk pricing existed.
-            <br />
-            <span style={{ color: "var(--accent)" }}>Price what everyone fears.</span>
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center justify-center gap-4"
-          >
-            {!isConnected ? (
-              <button
-                onClick={() => { if (ready) login(); }}
-                className="group relative"
-              >
-                <div className="absolute inset-0 bg-[#FF5A36] opacity-30 blur-lg group-hover:opacity-60 transition-opacity duration-300 rounded" />
-                <div className="relative px-8 py-3 text-xs font-bold tracking-widest bg-[#FF5A36] text-[#030305] transition-transform duration-300 group-hover:scale-[1.02] rounded-sm">
-                  ENTER APP
-                </div>
-              </button>
-            ) : (
-              <button
-                onClick={() => setWarpActive(true)}
-                className="group relative"
-              >
-                <div className="absolute inset-0 bg-[#FF5A36] opacity-30 blur-lg group-hover:opacity-60 transition-opacity duration-300 rounded" />
-                <div className="relative px-8 py-3 text-xs font-bold tracking-widest bg-[#FF5A36] text-[#030305] transition-transform duration-300 group-hover:scale-[1.02] rounded-sm">
-                  ENTER APP
-                </div>
-              </button>
-            )}
-            <Link
-              to="/docs"
-              className="glass-panel px-8 py-3 text-xs font-bold tracking-widest transition-all duration-300 inline-block rounded-sm hover:scale-[1.02] hover:text-white"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              DOCUMENTATION
-            </Link>
-          </motion.div>
+          <h2 className="text-xl md:text-3xl font-medium tracking-tight text-white mb-2">
+            The Oracle for Exploit Probability
+          </h2>
+          <p className="text-sm md:text-lg font-medium" style={{ color: "var(--accent)" }}>
+            Price what everyone fears.
+          </p>
         </motion.div>
 
-        {/* Scroll indicator */}
+        {/* Logo with pixel dissolve */}
+        <LogoDissolve scrollProgressRef={scrollProgressRef} />
+
+        {/* Enter App button — only at 0% hero */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+          className="fixed bottom-[10%] left-0 right-0 z-[6] flex items-center justify-center px-6 pointer-events-none"
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.03, 0.08], [1, 0.5, 0]),
+          }}
+        >
+          {!isConnected ? (
+            <button
+              onClick={() => {
+                if (ready) login();
+              }}
+              className="pointer-events-auto px-10 py-3.5 text-xs font-bold tracking-widest transition-all duration-300"
+              style={{
+                background: "linear-gradient(135deg, #FF5A36, #FF8C69)",
+                color: "#030305",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.filter = "brightness(1.15) drop-shadow(0 0 20px rgba(255, 90, 54, 0.4))";
+                e.currentTarget.style.transform = "scale(1.03)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.filter = "brightness(1)";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              ENTER APP
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/app")}
+              className="pointer-events-auto px-10 py-3.5 text-xs font-bold tracking-widest transition-all duration-300"
+              style={{
+                background: "linear-gradient(135deg, #FF5A36, #FF8C69)",
+                color: "#030305",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.filter = "brightness(1.15) drop-shadow(0 0 20px rgba(255, 90, 54, 0.4))";
+                e.currentTarget.style.transform = "scale(1.03)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.filter = "brightness(1)";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              ENTER APP
+            </button>
+          )}
+        </motion.div>
+
+        {/* Scroll hint */}
+        <motion.div
+          className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9] flex flex-col items-center gap-2"
+          style={{ opacity: useTransform(scrollYProgress, [0, 0.06], [1, 0]) }}
         >
           <span className="text-[10px] font-bold tracking-widest" style={{ color: "var(--text-tertiary)" }}>
             SCROLL
@@ -416,270 +172,194 @@ export function LandingPage() {
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             className="w-px h-8"
-            style={{ background: "linear-gradient(to bottom, var(--accent), transparent)" }}
+            style={{ background: "linear-gradient(to bottom, #FF5A36, transparent)" }}
           />
         </motion.div>
-      </section>
 
-      {/* Marquee */}
-      <Marquee />
+        {/* Orbiting brand icons (12-32% scroll) */}
+        <OrbitingIcons scrollProgress={scrollYProgress} />
 
-      {/* How It Works */}
-      <section className="relative py-32 px-6" style={{ background: "var(--bg)" }}>
-        {/* Ambient background glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,90,54,0.03), transparent 60%)" }} />
-        <div className="max-w-6xl mx-auto relative">
-          <FadeUp>
-            <div className="mb-20 text-center">
+        {/* Mechanism Section — How It Works (28-70% scroll) */}
+        <div className="fixed inset-0 z-[7] flex items-center justify-center px-6 pointer-events-none">
+          <div className="max-w-6xl w-full pointer-events-auto">
+            {/* Section header */}
+            <motion.div
+              className="text-center mb-10 md:mb-14"
+              style={{ opacity: mechanismHeaderOpacity, y: mechanismHeaderY }}
+            >
               <div className="inline-flex items-center gap-3 mb-4">
                 <span className="w-8 h-px" style={{ background: "var(--accent)" }} />
                 <span className="text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>MECHANISM</span>
                 <span className="w-8 h-px" style={{ background: "var(--accent)" }} />
               </div>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter block" style={{ color: "var(--text-primary)" }}>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter" style={{ color: "var(--text-primary)" }}>
                 How It Works
               </h2>
-              <p className="text-sm mt-4 max-w-md mx-auto" style={{ color: "var(--text-tertiary)" }}>
+              <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "var(--text-tertiary)" }}>
                 Four steps from listing to consumption. Fully autonomous. Fully on-chain.
               </p>
-            </div>
-          </FadeUp>
+            </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            {/* Connecting line */}
-            <div className="hidden md:block absolute top-12 left-[12.5%] right-[12.5%] h-px" style={{ background: "linear-gradient(to right, var(--border), var(--accent), var(--border))" }} />
-
-
-
-
-            {STEPS.map((step, i) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                className="relative group"
-                style={{ willChange: "opacity, transform" }}
-              >
-                <div className="glass-panel p-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(255,90,54,0.1)]">
-                  <div className="absolute inset-0 bg-[#FF5A36] opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500 rounded-xl" />
-                  <div className="mb-6 relative w-full flex justify-center">
-                    <img src={step.image} alt={step.title} className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-2xl" />
+            {/* Steps grid — asymmetric sizes, no connecting line */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
+              {/* Step 1 — tallest */}
+              <motion.div style={{ opacity: card1Opacity, y: card1Y }} className="relative">
+                <div className="glass-panel p-7 pb-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-5 relative w-full flex justify-center">
+                    <img src="/step-list.png" alt="List" className="w-full h-36 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-16 h-16 mx-auto mb-6 flex items-center justify-center relative z-10 rounded-full transition-shadow duration-500 group-hover:shadow-[0_0_30px_rgba(255,90,54,0.3)]"
-                    style={{
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      boxShadow: "0 0 20px rgba(255,90,54,0.15)",
-                    }}
+                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-xl font-black font-data" style={{ color: "var(--accent)" }}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>01</span>
                   </div>
-                  <h3 className="text-lg font-bold mb-3 relative z-10" style={{ color: "var(--text-primary)" }}>{step.title}</h3>
-                  <p className="text-sm leading-relaxed relative z-10" style={{ color: "var(--text-secondary)" }}>{step.desc}</p>
+                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>List</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                    Any protocol lists its smart contracts. No approval. No whitelisting fee.
+                  </p>
                 </div>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      <SectionDivider />
-
-      {/* Live Risk Feed Preview */}
-      <section className="relative py-32 px-6" style={{ background: "var(--bg)" }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 40% at 20% 50%, rgba(255,90,54,0.03), transparent 60%)" }} />
-        <div className="max-w-6xl mx-auto relative">
-          <FadeUp>
-            <div className="mb-16">
-              <div className="inline-flex items-center gap-3 mb-4">
-                <span className="w-2 h-2 rounded-full animate-pulse-glow" style={{ background: "var(--accent)" }} />
-                <span className="text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>LIVE FEED</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter block" style={{ color: "var(--text-primary)" }}>
-                Real-Time Risk<br />Signals
-              </h2>
-              <p className="text-sm mt-4 max-w-lg" style={{ color: "var(--text-tertiary)" }}>
-                Live exploit probability feeds powering the next generation of DeFi risk infrastructure.
-              </p>
-            </div>
-          </FadeUp>
-
-          <div className="flex flex-col gap-3">
-            {PROTOCOLS.map((p, i) => (
-              <motion.div
-                key={p.name}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.6, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
-                className="relative group"
-                style={{ willChange: "opacity, transform" }}
-              >
-                <div className="glass-panel flex items-center justify-between px-6 py-5 cursor-pointer relative overflow-hidden rounded-xl border border-[var(--glass-border)] hover:border-[#FF5A36] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(255,90,54,0.15)]">
-                <div className="flex items-center gap-4">
-                  <span className="text-xs font-data font-bold w-6" style={{ color: "var(--text-tertiary)" }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div className="relative flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full animate-pulse-glow" style={{ background: p.risk > 65 ? "var(--negative)" : p.risk > 30 ? "var(--accent)" : "var(--positive)" }} />
-                    <ScrambleText
-                      text={p.name}
-                      className="text-sm font-medium transition-colors group-hover:text-white"
-                      style={{ color: "var(--text-primary)" }}
-                    />
+              {/* Step 2 — shortest */}
+              <motion.div style={{ opacity: card2Opacity, y: card2Y }} className="relative">
+                <div className="glass-panel p-5 pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-3 relative w-full flex justify-center">
+                    <img src="/step-stake.png" alt="Stake" className="w-full h-20 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
-                </div>
-                <div className="flex items-center gap-6">
-                  <div className="hidden sm:flex items-center gap-2">
-                    <span className="text-[10px] font-bold tracking-wider px-2 py-0.5" style={{ background: "rgba(255,59,92,0.08)", color: "var(--negative)" }}>
-                      S ${(p.short / 1e6).toFixed(1)}M
-                    </span>
-                    <span className="text-[10px] font-bold tracking-wider px-2 py-0.5" style={{ background: "rgba(0,212,170,0.08)", color: "var(--positive)" }}>
-                      L ${(p.long / 1e6).toFixed(1)}M
-                    </span>
-                  </div>
-                  <div className="w-32 h-1.5 overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{
-                        background: p.risk > 65 ? "var(--negative)" : p.risk > 30 ? "var(--accent)" : "var(--positive)",
-                        boxShadow: `0 0 10px ${p.risk > 65 ? "var(--negative)" : p.risk > 30 ? "var(--accent)" : "var(--positive)"}`,
-                      }}
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${p.risk}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.2, delay: 0.3 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                  </div>
-                  <span
-                    className="text-sm font-data font-bold w-10 text-right"
-                    style={{
-                      color: p.risk > 65 ? "var(--negative)" : p.risk > 30 ? "var(--accent)" : "var(--positive)",
-                    }}
+                  <div
+                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    {p.risk}
-                  </span>
-                </div>
+                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>02</span>
+                  </div>
+                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Stake</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                    Researchers stake USDC to price exploit probability. Short bets on hack. Long bets on safety.
+                  </p>
                 </div>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      <SectionDivider />
-
-      {/* Features */}
-      <section className="relative py-32 px-6" style={{ background: "var(--bg)" }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 50% 50% at 80% 30%, rgba(255,90,54,0.03), transparent 60%)" }} />
-        <div className="max-w-6xl mx-auto relative">
-          <FadeUp>
-            <div className="mb-16">
-              <div className="inline-flex items-center gap-3 mb-4">
-                <span className="w-8 h-px" style={{ background: "var(--accent)" }} />
-                <span className="text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>CAPABILITIES</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter relative z-30 block" style={{ color: "var(--text-primary)" }}>
-                What Echo Does
-              </h2>
-              <p className="text-sm mt-4 max-w-lg" style={{ color: "var(--text-tertiary)" }}>
-                A complete risk infrastructure layer for decentralized finance.
-              </p>
-            </div>
-          </FadeUp>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px relative z-10" style={{ background: "var(--border)" }}>
-            {FEATURES.map((f, i) => (
-              <FeatureCard key={f.num} feature={f} index={i} />
-            ))}
-          </div>
-          
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* Stats */}
-      <section className="relative py-24 px-6 overflow-hidden" style={{ background: "var(--bg)" }}>
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,90,54,0.04), transparent)" }}
-        />
-        <div className="max-w-6xl mx-auto relative">
-          <FadeUp>
-            <div className="mb-14">
-              <div className="inline-flex items-center gap-3 mb-3">
-                <span className="w-8 h-px" style={{ background: "var(--text-tertiary)" }} />
-                <span className="text-xs font-bold tracking-widest" style={{ color: "var(--text-tertiary)" }}>TRACTION</span>
-              </div>
-            </div>
-          </FadeUp>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {STATS.map((s, i) => (
-              <FadeUp key={s.label} delay={i * 0.1}>
-                <div className="glass-panel p-8 text-center h-full rounded-2xl flex flex-col justify-center group border border-[var(--glass-border)] hover:border-[#FF5A36] transition-all duration-300">
-                  <div className="text-3xl md:text-5xl font-black mb-3 bg-clip-text text-transparent bg-gradient-to-r from-gray-200 to-gray-500 group-hover:from-[#FF5A36] group-hover:to-[#FF8C69] transition-all duration-300">
-                    <AnimatedCounter value={s.value.replace(/[^0-9.]/g, "")} prefix={s.value.startsWith("$") ? "$" : ""} suffix={s.value.endsWith("M") ? "M" : ""} />
+              {/* Step 3 — medium-tall */}
+              <motion.div style={{ opacity: card3Opacity, y: card3Y }} className="relative">
+                <div className="glass-panel p-6 pb-7 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-4 relative w-full flex justify-center">
+                    <img src="/step-resolve.png" alt="Resolve" className="w-full h-32 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
-                  <div className="text-[10px] font-bold tracking-widest text-[var(--text-secondary)] group-hover:text-white transition-colors duration-300">
-                    {s.label.toUpperCase()}
+                  <div
+                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
+                  >
+                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>03</span>
+                  </div>
+                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Resolve</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                    48h guardian arbitration validates PoCs. Confirmed exploits trigger automatic payouts.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Step 4 — medium */}
+              <motion.div style={{ opacity: card4Opacity, y: card4Y }} className="relative">
+                <div className="glass-panel p-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-4 relative w-full flex justify-center">
+                    <img src="/step-consume.png" alt="Consume" className="w-full h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                  <div
+                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
+                  >
+                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>04</span>
+                  </div>
+                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Consume</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                    Money markets, insurers, and derivatives platforms query the live risk feed on-chain.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* Live Markets (72-78% scroll) */}
+        <LiveMarkets scrollProgress={scrollYProgress} />
+
+        {/* Normal scroll content — Traction + Footer */}
+        <div
+          className="absolute left-0 right-0 z-10 px-6 pt-24 pb-12"
+          style={{ top: "880vh", minHeight: "120vh" }}
+        >
+          <div className="max-w-6xl mx-auto">
+            {/* Traction */}
+            <section className="relative py-24 overflow-hidden">
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ background: "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,90,54,0.04), transparent)" }}
+              />
+              <div className="relative">
+                <div className="mb-14 text-center">
+                  <div className="inline-flex items-center gap-3 mb-3">
+                    <span className="w-8 h-px" style={{ background: "var(--text-tertiary)" }} />
+                    <span className="text-xs font-bold tracking-widest" style={{ color: "var(--text-tertiary)" }}>TRACTION</span>
+                    <span className="w-8 h-px" style={{ background: "var(--text-tertiary)" }} />
                   </div>
                 </div>
-              </FadeUp>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* CTA */}
-      <section className="relative py-32 px-6 overflow-hidden" style={{ background: "var(--bg)" }}>
-        <Constellation className="z-0" />
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 0%, var(--bg) 100%)" }}
-        />
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {STATS.map((s, i) => (
+                    <GlassCard key={s.label} delay={i * 0.1} className="text-center py-8">
+                      <div className="text-3xl md:text-4xl font-black mb-3 bg-clip-text text-transparent bg-gradient-to-r from-gray-200 to-gray-500">
+                        {s.value}
+                      </div>
+                      <div className="text-[10px] font-bold tracking-widest text-[var(--text-secondary)] uppercase">
+                        {s.label}
+                      </div>
+                    </GlassCard>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-        <WarpJump
-          active={warpActive}
-          onComplete={() => navigate("/app")}
-        />
-
-        <div className="max-w-4xl mx-auto relative z-10">
-          <FadeUp>
-            <div className="text-center">
-              <motion.h2
-                className="text-5xl md:text-7xl font-black tracking-tighter mb-6"
+            {/* CTA */}
+            <section className="py-20 text-center">
+              <h2
+                className="text-4xl md:text-6xl font-black tracking-tighter mb-6"
                 style={{ color: "var(--text-primary)", textShadow: "0 0 60px rgba(255, 90, 54, 0.1)" }}
-                whileInView={{ scale: [0.95, 1] }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
               >
                 Ready to Price<br /><span style={{ color: "var(--accent)" }}>Risk?</span>
-              </motion.h2>
-              <p className="text-base mb-12 max-w-md mx-auto" style={{ color: "var(--text-secondary)" }}>
+              </h2>
+              <p className="text-base mb-10 max-w-md mx-auto" style={{ color: "var(--text-secondary)" }}>
                 Launch a market, stake a position, or integrate the Echo Risk Feed into your protocol.
               </p>
-              <div className="flex items-center justify-center gap-4">
-                <button
-                  onClick={() => setWarpActive(true)}
-                  className="px-10 py-4 text-xs font-bold tracking-widest transition-all duration-200"
-                  style={{ background: "var(--accent)", color: "var(--bg)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.15)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.filter = "brightness(1)"; }}
-                >
-                  EXPLORE MARKETS
-                </button>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                {!isConnected ? (
+                  <button
+                    onClick={() => {
+                      if (ready) login();
+                    }}
+                    className="px-10 py-4 text-xs font-bold tracking-widest transition-all duration-300"
+                    style={{ background: "var(--accent)", color: "var(--bg)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.15)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.filter = "brightness(1)"; }}
+                  >
+                    EXPLORE MARKETS
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate("/app")}
+                    className="px-10 py-4 text-xs font-bold tracking-widest transition-all duration-300"
+                    style={{ background: "var(--accent)", color: "var(--bg)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.15)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.filter = "brightness(1)"; }}
+                  >
+                    EXPLORE MARKETS
+                  </button>
+                )}
                 <a
-                  href="https://github.com/echo-protocol"
+                  href="https://github.com/Fed-Labs/Echo-Market"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-10 py-4 text-xs font-bold tracking-widest transition-all duration-200 inline-block"
+                  className="px-10 py-4 text-xs font-bold tracking-widest transition-all duration-300 inline-block"
                   style={{ border: "1px solid var(--border)", color: "var(--text-secondary)" }}
                   onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--border-hover)"; e.currentTarget.style.color = "var(--text-primary)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-secondary)"; }}
@@ -687,123 +367,58 @@ export function LandingPage() {
                   VIEW ON GITHUB
                 </a>
               </div>
-            </div>
-          </FadeUp>
-        </div>
-      </section>
+            </section>
 
-      {/* Footer */}
-      <footer className="py-16 px-6" style={{ borderTop: "1px solid var(--border)", background: "var(--bg)" }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 mb-12">
-            {/* Brand */}
-            <div>
-              <img
-                src="/logo.png"
-                alt="Echo"
-                className="h-7 w-auto object-contain mb-4"
-              />
-              <p className="text-sm leading-relaxed max-w-sm" style={{ color: "var(--text-secondary)" }}>
-                The first on-chain oracle for exploit probability. Real-time risk pricing for DeFi protocols.
-              </p>
-            </div>
-
-            {/* Social */}
-            <div className="md:text-right">
-              <h4 className="text-[10px] font-bold tracking-widest mb-4" style={{ color: "var(--text-tertiary)" }}>
-                SOCIAL
-              </h4>
-              <div className="flex items-center gap-4 md:justify-end">
-                <a
-                  href="https://github.com/Fed-Labs/Echo-Market"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm transition-colors hover:opacity-100"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                  </svg>
-                  GitHub
-                </a>
-                <a
-                  href="https://x.com/echosecure"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm transition-colors hover:opacity-100"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                  X
-                </a>
+            {/* Footer */}
+            <footer className="py-12" style={{ borderTop: "1px solid var(--border)" }}>
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 mb-10">
+                <div>
+                  <img src="/logo.png" alt="Echo" className="h-7 w-auto object-contain mb-4" />
+                  <p className="text-sm leading-relaxed max-w-sm" style={{ color: "var(--text-secondary)" }}>
+                    The first on-chain oracle for exploit probability. Real-time risk pricing for DeFi protocols.
+                  </p>
+                </div>
+                <div className="md:text-right">
+                  <h4 className="text-[10px] font-bold tracking-widest mb-4" style={{ color: "var(--text-tertiary)" }}>SOCIAL</h4>
+                  <div className="flex items-center gap-4 md:justify-end">
+                    <a
+                      href="https://github.com/Fed-Labs/Echo-Market"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm transition-colors hover:text-white"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      GitHub
+                    </a>
+                    <a
+                      href="https://x.com/echosecure"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm transition-colors hover:text-white"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      X
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div
-            className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6"
-            style={{ borderTop: "1px solid var(--border)" }}
-          >
-            <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-              &copy; {new Date().getFullYear()} Fed Labs Ltd. All rights reserved.
-            </span>
-            <div className="flex items-center gap-6 text-xs" style={{ color: "var(--text-tertiary)" }}>
-              <Link to="/docs" className="hover:text-white transition-colors">Docs</Link>
-              <span style={{ color: "var(--border)" }}>|</span>
-              <span className="font-data">Base Sepolia</span>
-            </div>
+              <div
+                className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6"
+                style={{ borderTop: "1px solid var(--border)" }}
+              >
+                <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                  &copy; {new Date().getFullYear()} Fed Labs Ltd. All rights reserved.
+                </span>
+                <div className="flex items-center gap-6 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                  <Link to="/docs" className="hover:text-white transition-colors">Docs</Link>
+                  <span style={{ color: "var(--border)" }}>|</span>
+                  <span className="font-data">Base Sepolia</span>
+                </div>
+              </div>
+            </footer>
           </div>
         </div>
-      </footer>
-
-      <style>{`
-        @keyframes gradient-x {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-33.333%); }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-        @keyframes float-particle-anim {
-          0%, 100% { transform: translate(0, 0); opacity: 0.2; }
-          25% { transform: translate(20px, -40px); opacity: 0.5; }
-          50% { transform: translate(-10px, -20px); opacity: 0.3; }
-          75% { transform: translate(15px, -50px); opacity: 0.4; }
-        }
-        .float-particle {
-          animation-name: float-particle-anim;
-          animation-timing-function: ease-in-out;
-          animation-iteration-count: infinite;
-        }
-        .spotlight-cursor {
-          background: radial-gradient(600px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,90,54,0.08), transparent 40%);
-        }
-        @keyframes orb-pulse-anim {
-          0%, 100% { transform: scale(1); opacity: 0.3; }
-          50% { transform: scale(1.2); opacity: 0.6; }
-        }
-        .orb-pulse {
-          animation: orb-pulse-anim 8s ease-in-out infinite;
-        }
-        @keyframes section-shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(400%); }
-        }
-        .section-shimmer {
-          animation: section-shimmer 3s ease-in-out infinite;
-        }
-        @keyframes risk-pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.7; }
-        }
-      `}</style>
-    </div>
+      </div>
+    </LenisWrapper>
   );
 }
