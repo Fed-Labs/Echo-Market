@@ -22,14 +22,14 @@ export function LiveMarkets({ scrollProgress }: LiveMarketsProps) {
       className="fixed inset-0 z-[7] flex items-center justify-center px-6 pointer-events-none"
       style={{ opacity: sectionOpacity, y: sectionY }}
     >
-      <div className="max-w-4xl w-full pointer-events-auto">
+      <div className="max-w-4xl w-full pointer-events-auto max-h-[85vh] md:max-h-none overflow-y-auto md:overflow-visible py-4">
         {/* Header */}
-        <div className="mb-10 md:mb-12">
+        <div className="mb-6 md:mb-12">
           <div className="inline-flex items-center gap-3 mb-4">
             <span className="w-2 h-2 rounded-full animate-pulse-glow" style={{ background: "var(--accent)" }} />
             <span className="text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>LIVE FEED</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tighter" style={{ color: "var(--text-primary)" }}>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tighter" style={{ color: "var(--text-primary)" }}>
             Real-Time Risk<br />Signals
           </h2>
           <p className="text-sm mt-3 max-w-lg" style={{ color: "var(--text-tertiary)" }}>
@@ -48,8 +48,8 @@ export function LiveMarkets({ scrollProgress }: LiveMarketsProps) {
               transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
               className="relative group"
             >
-              <div className="glass-panel flex items-center justify-between px-5 py-4 cursor-pointer relative overflow-hidden rounded-xl border border-[var(--glass-border)] hover:border-[#FF5A36] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(255,90,54,0.15)] transition-all duration-300">
-                <div className="flex items-center gap-4">
+              <div className="glass-panel flex items-center justify-between px-4 md:px-5 py-3 md:py-4 cursor-pointer relative overflow-hidden rounded-xl border border-[var(--glass-border)] hover:border-[#FF5A36] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(255,90,54,0.15)] transition-all duration-300">
+                <div className="flex items-center gap-3 md:gap-4">
                   <span className="text-xs font-data font-bold w-5" style={{ color: "var(--text-tertiary)" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
@@ -63,7 +63,7 @@ export function LiveMarkets({ scrollProgress }: LiveMarketsProps) {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 md:gap-6">
+                <div className="flex items-center gap-3 md:gap-6">
                   <div className="hidden sm:flex items-center gap-2">
                     <span className="text-[10px] font-bold tracking-wider px-2 py-0.5" style={{ background: "rgba(255,59,92,0.08)", color: "var(--negative)" }}>
                       S ${(p.short / 1e6).toFixed(1)}M
@@ -72,7 +72,7 @@ export function LiveMarkets({ scrollProgress }: LiveMarketsProps) {
                       L ${(p.long / 1e6).toFixed(1)}M
                     </span>
                   </div>
-                  <div className="w-24 md:w-32 h-1.5 overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
+                  <div className="w-20 md:w-32 h-1.5 overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
                     <motion.div
                       className="h-full rounded-full"
                       style={{

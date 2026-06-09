@@ -1,4 +1,5 @@
 import { motion, useTransform, type MotionValue } from "framer-motion";
+import { useMemo } from "react";
 
 interface OrbitingIconsProps {
   scrollProgress: MotionValue<number>;
@@ -9,14 +10,14 @@ interface OrbitalBrand {
   color: string;
   glow: string;
   size: number;
-  orbitSize: number; // vw/vh based orbit diameter
-  duration: number; // seconds for one orbit
+  orbitSize: number;
+  duration: number;
   direction: "normal" | "reverse";
-  startAngle: number; // degrees
+  startAngle: number;
   depth: number;
 }
 
-const BRANDS: OrbitalBrand[] = [
+const BRANDS_DESKTOP: OrbitalBrand[] = [
   { label: "C", color: "#0052FF", glow: "rgba(0,82,255,0.4)", size: 44, orbitSize: 38, duration: 24, direction: "normal", startAngle: 0, depth: 2 },
   { label: "B", color: "#F0B90B", glow: "rgba(240,185,11,0.4)", size: 40, orbitSize: 46, duration: 32, direction: "reverse", startAngle: 35, depth: 1 },
   { label: "L", color: "#2D2D2D", glow: "rgba(255,255,255,0.2)", size: 38, orbitSize: 30, duration: 20, direction: "normal", startAngle: 72, depth: 3 },
@@ -28,6 +29,16 @@ const BRANDS: OrbitalBrand[] = [
   { label: "Li", color: "#00A3FF", glow: "rgba(0,163,255,0.4)", size: 38, orbitSize: 44, duration: 26, direction: "normal", startAngle: 290, depth: 0 },
   { label: "E", color: "#3D3D3D", glow: "rgba(255,255,255,0.15)", size: 40, orbitSize: 58, duration: 34, direction: "reverse", startAngle: 325, depth: 2 },
   { label: "Co", color: "#00D395", glow: "rgba(0,211,149,0.4)", size: 36, orbitSize: 32, duration: 19, direction: "normal", startAngle: 55, depth: 1 },
+];
+
+const BRANDS_MOBILE: OrbitalBrand[] = [
+  { label: "C", color: "#0052FF", glow: "rgba(0,82,255,0.4)", size: 30, orbitSize: 28, duration: 24, direction: "normal", startAngle: 0, depth: 2 },
+  { label: "B", color: "#F0B90B", glow: "rgba(240,185,11,0.4)", size: 28, orbitSize: 34, duration: 32, direction: "reverse", startAngle: 45, depth: 1 },
+  { label: "M", color: "#1AAB9B", glow: "rgba(26,171,155,0.4)", size: 30, orbitSize: 40, duration: 28, direction: "reverse", startAngle: 120, depth: 2 },
+  { label: "U", color: "#FF007A", glow: "rgba(255,0,122,0.4)", size: 28, orbitSize: 32, duration: 22, direction: "normal", startAngle: 165, depth: 1 },
+  { label: "Ch", color: "#375BD2", glow: "rgba(55,91,210,0.4)", size: 30, orbitSize: 36, duration: 30, direction: "reverse", startAngle: 240, depth: 3 },
+  { label: "Li", color: "#00A3FF", glow: "rgba(0,163,255,0.4)", size: 28, orbitSize: 38, duration: 26, direction: "normal", startAngle: 300, depth: 0 },
+  { label: "Co", color: "#00D395", glow: "rgba(0,211,149,0.4)", size: 26, orbitSize: 30, duration: 19, direction: "normal", startAngle: 75, depth: 1 },
 ];
 
 function BrandPill({ brand }: { brand: OrbitalBrand }) {
@@ -69,8 +80,13 @@ function BrandPill({ brand }: { brand: OrbitalBrand }) {
   );
 }
 
+function isMobile() {
+  return window.innerWidth < 768;
+}
+
 export function OrbitingIcons({ scrollProgress }: OrbitingIconsProps) {
   const opacity = useTransform(scrollProgress, [0.12, 0.18, 0.22, 0.30], [0, 1, 1, 0]);
+  const brands = useMemo(() => (isMobile() ? BRANDS_MOBILE : BRANDS_DESKTOP), []);
 
   return (
     <motion.div
@@ -97,7 +113,7 @@ export function OrbitingIcons({ scrollProgress }: OrbitingIconsProps) {
       </div>
 
       {/* Orbiting brand icons */}
-      {BRANDS.map((brand, i) => (
+      {brands.map((brand, i) => (
         <BrandPill key={i} brand={brand} />
       ))}
 

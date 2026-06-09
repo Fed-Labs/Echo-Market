@@ -83,7 +83,7 @@ export function LandingPage() {
 
   return (
     <LenisWrapper>
-      <div ref={containerRef} className="relative" style={{ height: "1000vh" }}>
+      <div ref={containerRef} className="relative overflow-x-hidden" style={{ height: "1000vh" }}>
         <ScrollProgressBar />
         <GrainOverlay />
 
@@ -174,7 +174,7 @@ export function LandingPage() {
 
         {/* Scroll hint */}
         <motion.div
-          className="fixed bottom-10 left-0 right-0 z-[9] flex flex-col items-center gap-2"
+          className="fixed bottom-6 md:bottom-10 left-0 right-0 z-[9] flex flex-col items-center gap-2"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -200,10 +200,10 @@ export function LandingPage() {
 
         {/* Mechanism Section — How It Works (28-70% scroll) */}
         <div className="fixed inset-0 z-[7] flex items-center justify-center px-6 pointer-events-none">
-          <div className="max-w-6xl w-full pointer-events-auto">
+          <div className="max-w-6xl w-full pointer-events-auto max-h-screen overflow-y-auto md:overflow-visible py-4">
             {/* Section header */}
             <motion.div
-              className="text-center mb-10 md:mb-14"
+              className="text-center mb-6 md:mb-14"
               style={{ opacity: mechanismHeaderOpacity, y: mechanismHeaderY }}
             >
               <div className="inline-flex items-center gap-3 mb-4">
@@ -223,15 +223,15 @@ export function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
               {/* Step 1 — tallest */}
               <motion.div style={{ opacity: card1Opacity, y: card1Y }} className="relative">
-                <div className="glass-panel p-7 pb-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-5 relative w-full flex justify-center">
-                    <img src="/step-list.png" alt="List" className="w-full h-36 object-contain transition-transform duration-500 group-hover:scale-105" />
+                <div className="glass-panel p-5 md:p-7 pb-6 md:pb-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-3 md:mb-5 relative w-full flex justify-center">
+                    <img src="/step-list.png" alt="List" className="w-full h-24 md:h-36 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>01</span>
+                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>01</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>List</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
@@ -242,15 +242,15 @@ export function LandingPage() {
 
               {/* Step 2 — shortest */}
               <motion.div style={{ opacity: card2Opacity, y: card2Y }} className="relative">
-                <div className="glass-panel p-5 pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-3 relative w-full flex justify-center">
-                    <img src="/step-stake.png" alt="Stake" className="w-full h-20 object-contain transition-transform duration-500 group-hover:scale-105" />
+                <div className="glass-panel p-4 md:p-5 pb-5 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-2 md:mb-3 relative w-full flex justify-center">
+                    <img src="/step-stake.png" alt="Stake" className="w-full h-16 md:h-20 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>02</span>
+                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>02</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Stake</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
@@ -261,15 +261,15 @@ export function LandingPage() {
 
               {/* Step 3 — medium-tall */}
               <motion.div style={{ opacity: card3Opacity, y: card3Y }} className="relative">
-                <div className="glass-panel p-6 pb-7 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-4 relative w-full flex justify-center">
-                    <img src="/step-resolve.png" alt="Resolve" className="w-full h-32 object-contain transition-transform duration-500 group-hover:scale-105" />
+                <div className="glass-panel p-5 md:p-6 pb-6 md:pb-7 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-3 md:mb-4 relative w-full flex justify-center">
+                    <img src="/step-resolve.png" alt="Resolve" className="w-full h-24 md:h-32 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>03</span>
+                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>03</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Resolve</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
@@ -280,15 +280,15 @@ export function LandingPage() {
 
               {/* Step 4 — medium */}
               <motion.div style={{ opacity: card4Opacity, y: card4Y }} className="relative">
-                <div className="glass-panel p-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-4 relative w-full flex justify-center">
-                    <img src="/step-consume.png" alt="Consume" className="w-full h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
+                <div className="glass-panel p-5 md:p-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                  <div className="mb-3 md:mb-4 relative w-full flex justify-center">
+                    <img src="/step-consume.png" alt="Consume" className="w-full h-20 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-14 h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-lg font-black font-data" style={{ color: "var(--accent)" }}>04</span>
+                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>04</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Consume</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
