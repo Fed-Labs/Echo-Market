@@ -200,7 +200,7 @@ export function LandingPage() {
 
         {/* Mechanism Section — How It Works (28-70% scroll) */}
         <div className="fixed inset-0 z-[7] flex items-center justify-center px-6 pointer-events-none">
-          <div className="max-w-6xl w-full pointer-events-auto max-h-screen overflow-y-auto md:overflow-visible py-4">
+          <div className="max-w-6xl w-full pointer-events-auto py-2 md:py-4">
             {/* Section header */}
             <motion.div
               className="text-center mb-6 md:mb-14"
@@ -220,18 +220,18 @@ export function LandingPage() {
             </motion.div>
 
             {/* Steps grid — asymmetric sizes, no connecting line */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 items-end">
               {/* Step 1 — tallest */}
               <motion.div style={{ opacity: card1Opacity, y: card1Y }} className="relative">
-                <div className="glass-panel p-5 md:p-7 pb-6 md:pb-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                <div className="glass-panel p-3 md:p-7 pb-4 md:pb-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
                   <div className="mb-3 md:mb-5 relative w-full flex justify-center">
-                    <img src="/step-list.png" alt="List" className="w-full h-24 md:h-36 object-contain transition-transform duration-500 group-hover:scale-105" />
+                    <img src="/step-list.png" alt="List" className="w-full h-16 md:h-36 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>01</span>
+                    <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>01</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>List</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
@@ -242,15 +242,15 @@ export function LandingPage() {
 
               {/* Step 2 — shortest */}
               <motion.div style={{ opacity: card2Opacity, y: card2Y }} className="relative">
-                <div className="glass-panel p-4 md:p-5 pb-5 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                <div className="glass-panel p-3 md:p-5 pb-4 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
                   <div className="mb-2 md:mb-3 relative w-full flex justify-center">
-                    <img src="/step-stake.png" alt="Stake" className="w-full h-16 md:h-20 object-contain transition-transform duration-500 group-hover:scale-105" />
+                    <img src="/step-stake.png" alt="Stake" className="w-full h-14 md:h-20 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>02</span>
+                    <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>02</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Stake</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
@@ -261,15 +261,15 @@ export function LandingPage() {
 
               {/* Step 3 — medium-tall */}
               <motion.div style={{ opacity: card3Opacity, y: card3Y }} className="relative">
-                <div className="glass-panel p-5 md:p-6 pb-6 md:pb-7 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                <div className="glass-panel p-3 md:p-6 pb-4 md:pb-7 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
                   <div className="mb-3 md:mb-4 relative w-full flex justify-center">
                     <img src="/step-resolve.png" alt="Resolve" className="w-full h-24 md:h-32 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>03</span>
+                    <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>03</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Resolve</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
@@ -280,15 +280,15 @@ export function LandingPage() {
 
               {/* Step 4 — medium */}
               <motion.div style={{ opacity: card4Opacity, y: card4Y }} className="relative">
-                <div className="glass-panel p-5 md:p-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
+                <div className="glass-panel p-3 md:p-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
                   <div className="mb-3 md:mb-4 relative w-full flex justify-center">
-                    <img src="/step-consume.png" alt="Consume" className="w-full h-20 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
+                    <img src="/step-consume.png" alt="Consume" className="w-full h-16 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
-                    <span className="text-base md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>04</span>
+                    <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>04</span>
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Consume</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
