@@ -118,7 +118,7 @@ export function LandingPage() {
 
         {/* Enter App button — only at 0% hero */}
         <motion.div
-          className="fixed bottom-[10%] left-0 right-0 z-[6] flex items-center justify-center px-6 pointer-events-none"
+          className="fixed bottom-[14%] md:bottom-[10%] left-0 right-0 z-[6] flex items-center justify-center px-6 pointer-events-none"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.25, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -219,79 +219,79 @@ export function LandingPage() {
               </p>
             </motion.div>
 
-            {/* Steps grid — asymmetric sizes, no connecting line */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 items-end">
-              {/* Step 1 — tallest */}
-              <motion.div style={{ opacity: card1Opacity, y: card1Y }} className="relative">
-                <div className="glass-panel p-3 md:p-7 pb-4 md:pb-8 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-3 md:mb-5 relative w-full flex justify-center">
-                    <img src="/step-list.png" alt="List" className="w-full h-16 md:h-36 object-contain transition-transform duration-500 group-hover:scale-105" />
+            {/* Steps grid — uniform on mobile, asymmetric on desktop */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 items-stretch">
+              {/* Step 1 */}
+              <motion.div style={{ opacity: card1Opacity, y: card1Y }} className="relative h-full">
+                <div className="glass-panel h-full p-3 md:p-5 pb-4 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group flex flex-col">
+                  <div className="mb-2 md:mb-4 relative w-full flex justify-center flex-shrink-0">
+                    <img src="/step-list.png" alt="List" className="w-full h-14 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-3 flex items-center justify-center relative z-10 rounded-full flex-shrink-0"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
                     <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>01</span>
                   </div>
-                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>List</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  <h3 className="text-sm md:text-base font-bold mb-1 md:mb-2 flex-shrink-0" style={{ color: "var(--text-primary)" }}>List</h3>
+                  <p className="text-[10px] md:text-xs leading-relaxed flex-grow" style={{ color: "var(--text-secondary)" }}>
                     Any protocol lists its smart contracts. No approval. No whitelisting fee.
                   </p>
                 </div>
               </motion.div>
 
-              {/* Step 2 — shortest */}
-              <motion.div style={{ opacity: card2Opacity, y: card2Y }} className="relative">
-                <div className="glass-panel p-3 md:p-5 pb-4 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-2 md:mb-3 relative w-full flex justify-center">
-                    <img src="/step-stake.png" alt="Stake" className="w-full h-14 md:h-20 object-contain transition-transform duration-500 group-hover:scale-105" />
+              {/* Step 2 */}
+              <motion.div style={{ opacity: card2Opacity, y: card2Y }} className="relative h-full">
+                <div className="glass-panel h-full p-3 md:p-5 pb-4 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group flex flex-col">
+                  <div className="mb-2 md:mb-4 relative w-full flex justify-center flex-shrink-0">
+                    <img src="/step-stake.png" alt="Stake" className="w-full h-14 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-3 flex items-center justify-center relative z-10 rounded-full flex-shrink-0"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
                     <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>02</span>
                   </div>
-                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Stake</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  <h3 className="text-sm md:text-base font-bold mb-1 md:mb-2 flex-shrink-0" style={{ color: "var(--text-primary)" }}>Stake</h3>
+                  <p className="text-[10px] md:text-xs leading-relaxed flex-grow" style={{ color: "var(--text-secondary)" }}>
                     Researchers stake USDC to price exploit probability. Short bets on hack. Long bets on safety.
                   </p>
                 </div>
               </motion.div>
 
-              {/* Step 3 — medium-tall */}
-              <motion.div style={{ opacity: card3Opacity, y: card3Y }} className="relative">
-                <div className="glass-panel p-3 md:p-6 pb-4 md:pb-7 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-3 md:mb-4 relative w-full flex justify-center">
-                    <img src="/step-resolve.png" alt="Resolve" className="w-full h-24 md:h-32 object-contain transition-transform duration-500 group-hover:scale-105" />
+              {/* Step 3 */}
+              <motion.div style={{ opacity: card3Opacity, y: card3Y }} className="relative h-full">
+                <div className="glass-panel h-full p-3 md:p-5 pb-4 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group flex flex-col">
+                  <div className="mb-2 md:mb-4 relative w-full flex justify-center flex-shrink-0">
+                    <img src="/step-resolve.png" alt="Resolve" className="w-full h-14 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-3 flex items-center justify-center relative z-10 rounded-full flex-shrink-0"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
                     <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>03</span>
                   </div>
-                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Resolve</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  <h3 className="text-sm md:text-base font-bold mb-1 md:mb-2 flex-shrink-0" style={{ color: "var(--text-primary)" }}>Resolve</h3>
+                  <p className="text-[10px] md:text-xs leading-relaxed flex-grow" style={{ color: "var(--text-secondary)" }}>
                     48h guardian arbitration validates PoCs. Confirmed exploits trigger automatic payouts.
                   </p>
                 </div>
               </motion.div>
 
-              {/* Step 4 — medium */}
-              <motion.div style={{ opacity: card4Opacity, y: card4Y }} className="relative">
-                <div className="glass-panel p-3 md:p-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group">
-                  <div className="mb-3 md:mb-4 relative w-full flex justify-center">
-                    <img src="/step-consume.png" alt="Consume" className="w-full h-16 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
+              {/* Step 4 */}
+              <motion.div style={{ opacity: card4Opacity, y: card4Y }} className="relative h-full">
+                <div className="glass-panel h-full p-3 md:p-5 pb-4 md:pb-6 text-center relative rounded-xl border border-transparent hover:border-[#FF5A36]/30 transition-all duration-300 group flex flex-col">
+                  <div className="mb-2 md:mb-4 relative w-full flex justify-center flex-shrink-0">
+                    <img src="/step-consume.png" alt="Consume" className="w-full h-14 md:h-24 object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div
-                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-4 flex items-center justify-center relative z-10 rounded-full"
+                    className="w-9 h-9 md:w-14 md:h-14 mx-auto mb-3 flex items-center justify-center relative z-10 rounded-full flex-shrink-0"
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 0 20px rgba(255,90,54,0.15)" }}
                   >
                     <span className="text-sm md:text-lg font-black font-data" style={{ color: "var(--accent)" }}>04</span>
                   </div>
-                  <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>Consume</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  <h3 className="text-sm md:text-base font-bold mb-1 md:mb-2 flex-shrink-0" style={{ color: "var(--text-primary)" }}>Consume</h3>
+                  <p className="text-[10px] md:text-xs leading-relaxed flex-grow" style={{ color: "var(--text-secondary)" }}>
                     Money markets, insurers, and derivatives platforms query the live risk feed on-chain.
                   </p>
                 </div>

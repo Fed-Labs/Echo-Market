@@ -22,7 +22,7 @@ export function LiveMarkets({ scrollProgress }: LiveMarketsProps) {
       className="fixed inset-0 z-[7] flex items-center justify-center px-6 pointer-events-none"
       style={{ opacity: sectionOpacity, y: sectionY }}
     >
-      <div className="max-w-4xl w-full pointer-events-auto max-h-[85vh] md:max-h-none overflow-y-auto md:overflow-visible py-4">
+      <div className="max-w-4xl w-full pointer-events-auto">
         {/* Header */}
         <div className="mb-6 md:mb-12">
           <div className="inline-flex items-center gap-3 mb-4">
