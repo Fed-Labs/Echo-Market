@@ -243,8 +243,8 @@ export function Market() {
           className="p-6"
           style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
         >
-          <div className="flex items-start justify-between mb-6">
-            <div className="min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-4">
+            <div className="min-w-0 flex-1">
               <h1 className="text-xl font-black tracking-tight truncate" style={{ color: "var(--text-primary)" }}>
                 {marketName || address?.slice(0, 14) + "..."}
               </h1>
@@ -253,7 +253,7 @@ export function Market() {
                   {String(marketSymbol).toUpperCase()}
                 </p>
               )}
-              <p className="text-xs font-data mt-1" style={{ color: "var(--text-tertiary)" }}>
+              <p className="text-xs font-data mt-1 truncate" style={{ color: "var(--text-tertiary)" }}>
                 {address}
               </p>
             </div>
@@ -265,7 +265,7 @@ export function Market() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.15 }}
-              className="mb-5 p-3 text-xs leading-relaxed markdown-body"
+              className="mb-5 p-3 text-xs leading-relaxed markdown-body overflow-x-auto"
               style={{ background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text-secondary)" }}
               dangerouslySetInnerHTML={{ __html: renderMarkdown(String(marketDescription)) }}
             />
