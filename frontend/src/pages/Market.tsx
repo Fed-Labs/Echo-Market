@@ -287,7 +287,7 @@ export function Market() {
             </motion.div>
           )}
 
-          <div className="grid grid-cols-3 gap-px" style={{ background: "var(--border)" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px" style={{ background: "var(--border)" }}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -361,7 +361,7 @@ export function Market() {
               POSITION BOOK
             </h2>
           </div>
-          <div className="grid grid-cols-2 divide-x" style={{ borderColor: "var(--border)" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor: "var(--border)" }}>
             <div className="p-5">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--negative)" }} />

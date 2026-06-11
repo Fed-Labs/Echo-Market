@@ -279,7 +279,8 @@ export function Docs() {
               Each market represents a single protocol address over a fixed time window. Markets are fully
               permissionless — anyone can create one via <Code>EchoFactory.createMarket()</Code>.
             </p>
-            <table className="w-full text-xs my-4" style={{ borderCollapse: "collapse" }}>
+            <div className="overflow-x-auto">
+            <table className="w-full text-xs my-4 min-w-[500px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)" }}>
                   <th className="text-left py-2 pr-4 font-data" style={{ color: "var(--text-tertiary)" }}>
@@ -315,6 +316,7 @@ export function Docs() {
                 ))}
               </tbody>
             </table>
+            </div>
             <p className="mt-4">
               <strong style={{ color: "var(--text-primary)" }}>SHORT</strong> — Researcher stakes USDC betting an exploit
               will occur within the window. Must submit a valid PoC to claim the pool.
@@ -330,7 +332,7 @@ export function Docs() {
               The EchoOracle contract implements <Code>AggregatorV3Interface</Code> for composability. Each protocol
               address has a dedicated risk score feed computed from the short/long ratio.
             </p>
-            <div className="grid grid-cols-3 gap-3 my-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
               {[
                 { label: "Decimals", value: "8" },
                 { label: "Range", value: "0-100" },
@@ -384,7 +386,8 @@ export function Docs() {
             <p className="mb-4">
               Each market has its own guardian set chosen by the protocol creator. No global council. No bottleneck.
             </p>
-            <table className="w-full text-xs my-4" style={{ borderCollapse: "collapse" }}>
+            <div className="overflow-x-auto">
+            <table className="w-full text-xs my-4 min-w-[500px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)" }}>
                   <th className="text-left py-2 pr-4 font-data" style={{ color: "var(--text-tertiary)" }}>
@@ -416,6 +419,7 @@ export function Docs() {
                 ))}
               </tbody>
             </table>
+            </div>
             <div className="p-3 mt-4" style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}>
               <div className="text-[10px] font-bold tracking-wider mb-1" style={{ color: "var(--accent)" }}>
                 WHY PER-MARKET?
@@ -561,7 +565,8 @@ console.log(\`Round: \${roundId}, Risk: \${riskPercent}%\`);`,
               The Echo backend exposes a REST API and WebSocket feed for market data, risk scores, and arbitration
               status. Base URL: <Code>https://api.echo-protocol.xyz</Code> (or your self-hosted instance).
             </p>
-            <table className="w-full text-xs my-4" style={{ borderCollapse: "collapse" }}>
+            <div className="overflow-x-auto">
+            <table className="w-full text-xs my-4 min-w-[500px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)" }}>
                   <th className="text-left py-2 pr-4 font-data" style={{ color: "var(--text-tertiary)" }}>
@@ -604,6 +609,7 @@ console.log(\`Round: \${roundId}, Risk: \${riskPercent}%\`);`,
                 ))}
               </tbody>
             </table>
+            </div>
             <p className="mt-2 text-xs" style={{ color: "var(--text-tertiary)" }}>
               WebSocket feed available at <Code>wss://api.echo-protocol.xyz</Code> for real-time market updates.
             </p>

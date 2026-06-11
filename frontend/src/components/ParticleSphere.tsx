@@ -209,10 +209,8 @@ export function ParticleSphere({ scrollProgressRef }: ParticleSphereProps) {
       const MOUSE_FORCE = 2.2;
 
       const perspective = 1200;
-      const spriteSize = glowSprites[0].width / dpr;
-      const halfSprite = spriteSize / 2;
 
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = "source-over";
 
       for (let i = 0; i < count; i++) {
         const idx = i * 12;
@@ -312,22 +310,16 @@ export function ParticleSphere({ scrollProgressRef }: ParticleSphereProps) {
         if (depthFade <= 0) continue;
 
         const alpha = explodePhase > 0.9 ? 0.9 : 0.95;
-        const drawSize = finalSize * 5;
-        const ratio = drawSize / spriteSize;
+        const color = ORANGE_PALETTE[colorIdx % ORANGE_PALETTE.length];
 
         ctx.globalAlpha = depthFade * alpha;
-        const sprite = glowSprites[colorIdx % glowSprites.length];
-        ctx.drawImage(
-          sprite,
-          sx - halfSprite * ratio,
-          sy - halfSprite * ratio,
-          spriteSize * ratio,
-          spriteSize * ratio
-        );
+        ctx.fillStyle = `rgb(${color.r},${color.g},${color.b})`;
+        ctx.beginPath();
+        ctx.arc(sx, sy, finalSize * 1.5, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "source-over";
       rafRef.current = requestAnimationFrame(draw);
     }
 

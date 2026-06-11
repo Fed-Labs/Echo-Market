@@ -83,7 +83,7 @@ export function Dashboard() {
           transition={{ delay: 0.3 }}
           style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
         >
-          <div className="p-5 flex items-center justify-between" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ borderBottom: "1px solid var(--border)" }}>
             <div>
               <span className="text-[10px] font-bold tracking-widest" style={{ color: "var(--accent)" }}>
                 FEATURED MARKET
@@ -138,7 +138,7 @@ export function Dashboard() {
             </div>
 
             {/* Risk bar */}
-            <div className="lg:col-span-2 flex items-center gap-4">
+            <div className="lg:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <span className="text-[10px] font-bold tracking-widest shrink-0" style={{ color: "var(--text-tertiary)" }}>
                 SHORT / LONG RATIO
               </span>

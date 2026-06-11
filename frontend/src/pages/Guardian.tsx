@@ -298,7 +298,7 @@ function SubmissionDetail({ sub, onClose }: { sub: Submission; onClose: () => vo
       </div>
 
       <div className="p-5 space-y-4">
-        <div className="grid grid-cols-2 gap-px" style={{ background: "var(--border)" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-px" style={{ background: "var(--border)" }}>
           {[
             { label: "RESEARCHER", value: sub.researcher },
             { label: "TARGET MARKET", value: marketName || sub.market },

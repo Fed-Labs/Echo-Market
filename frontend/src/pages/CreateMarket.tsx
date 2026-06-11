@@ -314,7 +314,7 @@ export function CreateMarket() {
             <label className="block text-xs font-bold tracking-widest mb-2" style={labelStyle}>
               WINDOW DURATION
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {DURATIONS.map((d) => (
                 <button
                   key={d.value}

@@ -64,7 +64,8 @@ export function Leaderboard() {
             </p>
           </div>
         ) : (
-          <div className="space-y-px" style={{ background: "var(--border)" }}>
+          <div className="overflow-x-auto" style={{ background: "var(--border)" }}>
+          <div className="min-w-[640px]" style={{ background: "var(--border)" }}>
             <div className="flex items-center px-5 py-2" style={{ background: "var(--surface)" }}>
               <span className="text-[10px] font-bold tracking-wider w-12" style={{ color: "var(--text-tertiary)" }}>RANK</span>
               <span className="text-[10px] font-bold tracking-wider flex-1" style={{ color: "var(--text-tertiary)" }}>ADDRESS</span>
@@ -105,6 +106,7 @@ export function Leaderboard() {
               </motion.div>
             ))}
           </div>
+        </div>
         )}
       </div>
     </div>
